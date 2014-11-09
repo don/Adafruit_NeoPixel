@@ -22,6 +22,7 @@ clockwise from the OUT connection.  If a different pixel is at the top,
 that's OK, the code can compensate (TOP_LED_FIRST and TOP_LED_SECOND below).
 */
 
+#include <RFduinoBLE.h> // RFduino support
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR_ATtiny85__ // Trinket, Gemma, etc.
   #include <avr/power.h>

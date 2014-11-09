@@ -32,8 +32,9 @@
   -------------------------------------------------------------------------*/
 
 #include "Adafruit_NeoPixel.h"
+#include <RFduinoBLE.h>
 
-Adafruit_NeoPixel::Adafruit_NeoPixel(uint16_t n, uint8_t p, uint8_t t) : numLEDs(n), numBytes(n * 3), pin(p), pixels(NULL), brightness(0), endTime(0)
+Adafruit_NeoPixel::Adafruit_NeoPixel(uint16_t n, uint8_t p, uint8_t t) : numLEDs(n), numBytes(n * 3), pin(p), pixels(NULL)
 #if defined(NEO_RGB) || defined(NEO_KHZ400)
   ,type(t)
 #endif
@@ -63,6 +64,13 @@ static inline void delayShort(uint32_t num) {
   );
 }
 #endif // __arm__
+
+// RFduino support 
+// www.RFduino.com
+#define checkRadio
+#if VARIANT == RFduino
+#define checkRadio while (RFduinoBLE.radioActive){} //wait if radio is active;
+#endif
 
 void Adafruit_NeoPixel::begin(void) {
   pinMode(pin, OUTPUT);
@@ -95,6 +103,161 @@ void Adafruit_NeoPixel::show(void) {
   // to the PORT register as needed.
 
   noInterrupts(); // Need 100% focus on instruction timing
+  
+  
+  //Support for RFduino
+  //www.RFduino.com
+#if VARIANT == RFduino
+
+#define KHZ800_ONE	\
+		__ASM ( \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+			); \
+		NRF_GPIO->OUTCLR = (1UL << pin); \
+			
+#define KHZ800_ZERO      \
+		NRF_GPIO->OUTCLR = (1UL << pin);  \
+		__ASM (  \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+			);
+#define KHZ400_ONE	\
+		__ASM ( \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+			); \
+		NRF_GPIO->OUTCLR = (1UL << pin); \
+		__ASM (  \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+			);
+			
+#define KHZ400_ZERO      \
+		NRF_GPIO->OUTCLR = (1UL << pin);  \
+		__ASM (  \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
+			);
+
+
+  uint8_t *p   = pixels, *end = p + numBytes;
+
+#ifdef NEO_KHZ400
+  if((type & NEO_SPDMASK) == NEO_KHZ800) { // 800 KHz bitstream
+#endif
+    while(p < end) {
+	checkRadio
+     uint8_t pix = ~*p++;
+	  	NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x80) {KHZ800_ZERO}
+		else {KHZ800_ONE}
+		NRF_GPIO->OUTSET = (1UL << pin);
+        	if (pix & 0x40) {KHZ800_ZERO}
+		else {KHZ800_ONE}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x20) {KHZ800_ZERO}
+		else {KHZ800_ONE}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x10) {KHZ800_ZERO}
+		else {KHZ800_ONE}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x08) {KHZ800_ZERO}
+		else {KHZ800_ONE}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x04) {KHZ800_ZERO}
+		else {KHZ800_ONE}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x02) {KHZ800_ZERO}
+		else {KHZ800_ONE}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x01) {KHZ800_ZERO}
+		else {KHZ800_ONE}
+      }
+#ifdef NEO_KHZ400
+ } else { // 400 kHz bitstream
+    while(p < end) {
+	checkRadio
+      uint8_t pix = *p++;
+       NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x80) {KHZ400_ONE}
+		else {KHZ400_ZERO}
+		NRF_GPIO->OUTSET = (1UL << pin);
+        if (pix & 0x40) {KHZ400_ONE}
+		else {KHZ400_ZERO}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x20) {KHZ400_ONE}
+		else {KHZ400_ZERO}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x10) {KHZ400_ONE}
+		else {KHZ400_ZERO}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x08) {KHZ400_ONE}
+		else {KHZ400_ZERO}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x04) {KHZ400_ONE}
+		else {KHZ400_ZERO}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x02) {KHZ400_ONE}
+		else {KHZ400_ZERO}
+		NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x01) {KHZ400_ONE}
+		else {KHZ400_ZERO}
+    }
+  }
+#endif
+#else
+
 
 #ifdef __AVR__
 
@@ -676,7 +839,7 @@ void Adafruit_NeoPixel::show(void) {
 
 #elif defined(__arm__)
 
-  // Paul Stoffregen: "This implementation may not be quite perfect, but
+// Paul Stoffregen: "This implementation may not be quite perfect, but
   // it seems to work reasonably well with an actual 20 LED WS2811 strip.
   // The timing at 48 MHz is off a bit, perhaps due to flash cache misses?
   // Ideally this code should execute from RAM to eliminate slight timing
@@ -840,6 +1003,9 @@ void Adafruit_NeoPixel::show(void) {
 
 #endif // end Architecture select
 
+#endif
+
+
   interrupts();
   endTime = micros(); // Save EOD time for latch on next call
 }
@@ -860,6 +1026,7 @@ void Adafruit_NeoPixel::setPin(uint8_t p) {
 void Adafruit_NeoPixel::setPixelColor(
  uint16_t n, uint8_t r, uint8_t g, uint8_t b) {
   if(n < numLEDs) {
+  checkRadio
     if(brightness) { // See notes in setBrightness()
       r = (r * brightness) >> 8;
       g = (g * brightness) >> 8;
@@ -884,6 +1051,7 @@ void Adafruit_NeoPixel::setPixelColor(
 // Set pixel color from 'packed' 32-bit RGB color:
 void Adafruit_NeoPixel::setPixelColor(uint16_t n, uint32_t c) {
   if(n < numLEDs) {
+  checkRadio
     uint8_t
       r = (uint8_t)(c >> 16),
       g = (uint8_t)(c >>  8),

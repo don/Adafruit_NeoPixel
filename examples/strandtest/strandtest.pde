@@ -1,3 +1,4 @@
+#include <RFduinoBLE.h> //RFduino support
 #include <Adafruit_NeoPixel.h>
 
 #define PIN 6
