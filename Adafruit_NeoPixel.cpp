@@ -126,6 +126,8 @@ void Adafruit_NeoPixel::show(void) {
 				" NOP\n\t" \
 				" NOP\n\t" \
 				" NOP\n\t" \
+				" NOP\n\t" \
+				" NOP\n\t" \
 			);
 #define KHZ400_ONE	\
 		__ASM ( \
@@ -198,31 +200,31 @@ void Adafruit_NeoPixel::show(void) {
 #endif
     while(p < end) {
 	checkRadio
-     uint8_t pix = ~*p++;
-	  	NRF_GPIO->OUTSET = (1UL << pin);
-		if (pix & 0x80) {KHZ800_ZERO}
-		else {KHZ800_ONE}
+     uint8_t pix = *p++;
+	  NRF_GPIO->OUTSET = (1UL << pin);
+		if (pix & 0x80) {KHZ800_ONE}
+		else {KHZ800_ZERO}
 		NRF_GPIO->OUTSET = (1UL << pin);
-        	if (pix & 0x40) {KHZ800_ZERO}
-		else {KHZ800_ONE}
+        if (pix & 0x40) {KHZ800_ONE}
+		else {KHZ800_ZERO}
 		NRF_GPIO->OUTSET = (1UL << pin);
-		if (pix & 0x20) {KHZ800_ZERO}
-		else {KHZ800_ONE}
+		if (pix & 0x20) {KHZ800_ONE}
+		else {KHZ800_ZERO}
 		NRF_GPIO->OUTSET = (1UL << pin);
-		if (pix & 0x10) {KHZ800_ZERO}
-		else {KHZ800_ONE}
+		if (pix & 0x10) {KHZ800_ONE}
+		else {KHZ800_ZERO}
 		NRF_GPIO->OUTSET = (1UL << pin);
-		if (pix & 0x08) {KHZ800_ZERO}
-		else {KHZ800_ONE}
+		if (pix & 0x08) {KHZ800_ONE}
+		else {KHZ800_ZERO}
 		NRF_GPIO->OUTSET = (1UL << pin);
-		if (pix & 0x04) {KHZ800_ZERO}
-		else {KHZ800_ONE}
+		if (pix & 0x04) {KHZ800_ONE}
+		else {KHZ800_ZERO}
 		NRF_GPIO->OUTSET = (1UL << pin);
-		if (pix & 0x02) {KHZ800_ZERO}
-		else {KHZ800_ONE}
+		if (pix & 0x02) {KHZ800_ONE}
+		else {KHZ800_ZERO}
 		NRF_GPIO->OUTSET = (1UL << pin);
-		if (pix & 0x01) {KHZ800_ZERO}
-		else {KHZ800_ONE}
+		if (pix & 0x01) {KHZ800_ONE}
+		else {KHZ800_ZERO}
       }
 #ifdef NEO_KHZ400
  } else { // 400 kHz bitstream
