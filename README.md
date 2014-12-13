@@ -3,9 +3,9 @@ Adafruit NeoPixel library with RFduino Support
 
 ## Notes about RFduino
 
-This is Adafruit's NeoPixel library with modifications for [RFduino](http://rfduino.com) made by Thomas Olson. See [the RFduino forum post](http://forum.rfduino.com/index.php?topic=30.msg1495#msg1495) for more details.
+This is Adafruit's NeoPixel library with modifications for [RFduino](http://rfduino.com) made by Thomas Olson. See [this RFduino forum post](http://forum.rfduino.com/index.php?topic=30.msg1495#msg1495) for more details.
 
-This code is based off an older version of the NeoPixel library https://github.com/adafruit/Adafruit_NeoPixel/commit/510e4558937b6f1ec4e5f3e4d8070361c7bf8657
+This code is based on an older version of the NeoPixel library https://github.com/adafruit/Adafruit_NeoPixel/commit/510e4558937b6f1ec4e5f3e4d8070361c7bf8657
 
 This code works with Arduino IDE 1.5.6-r2 and RFduino 2.1 or earlier. The forum post said it is broken with 1.5.7.
 
